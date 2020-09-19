@@ -1,30 +1,88 @@
-from flask import Flask, render_template, redirect
-from flask_pymongo import PyMongo
-import scrape_craigslist
-
-app = Flask(__name__)
-
-# Use flask_pymongo to set up mongo connection
-app.config["MONGO_URI"] = "mongodb://localhost:27017/craigslist_app"
-mongo = PyMongo(app)
-
-# Or set inline
-# mongo = PyMongo(app, uri="mongodb://localhost:27017/craigslist_app")
+from splinter import Browser
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
 
 
-@app.route("/")
-def index():
-    listings = mongo.db.listings.find_one()
-    return render_template("index.html", listings=listings)
+def init_browser():
+    # @NOTE: Replace the path with your actual path to the chromedriver
+    executable_path = {"executable_path": "chromedriver.exe"}
+    return Browser("chrome", **executable_path, headless=False)
 
 
-@app.route("/scrape")
-def scraper():
-    listings = mongo.db.listings
-    listings_data = scrape_craigslist.scrape()
-    listings.update({}, listings_data, upsert=True)
-    return redirect("/", code=302)
+def scrape():
+    # Latest news scrape
+    url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
+    listings={}
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    listings['headline']=soup.find('div', class_='content_title').get_text().replace('\n', '')
+    listings['summary']=soup.find('div', class_='rollover_description_inner').get_text().replace('\n', '')
+    
+    # Featured Image Url scrape
+    browser= init_browser()
+    url_2='https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
+    browser.visit(url_2)
+    browser.click_link_by_partial_text('FULL IMAGE')
+    browser.click_link_by_partial_text('more info')
+    browser.click_link_by_partial_href('largesize')
+    featured_image_url= browser.url
+    
+    # Mars facts table 
+    Mars_facts = 'file:///C:/Users/djack/Documents/LearnPython/web-scraping-challenge/Mission_to_Mars/Mars_table.html'
+    
+    # Mars hemispheres
+    url_3 = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url_3)
+    browser.click_link_by_partial_text('Cerberus')
+    browser.click_link_by_partial_text('Sample')
+    Cerberus_image_url=browser.windows[1].url
+    browser.back()
+    browser.click_link_by_partial_text('Schiaparelli')
+    browser.click_link_by_partial_text('Sample')
+    Schiaparelli_image_url=browser.windows[2].url
+    browser.back()
+    browser.click_link_by_partial_text('Syrtis')
+    browser.click_link_by_partial_text('Sample')
+    Syrtis_image_url=browser.windows[3].url
+    browser.back()
+    browser.click_link_by_partial_text('Valles')
+    browser.click_link_by_partial_text('Sample')
+    Valles_image_url=browser.windows[4].url
+    hemisphere_image_urls = [
+    {"title": "Valles Marineris Hemisphere", "img_url": Valles_image_url},
+    {"title": "Cerberus Hemisphere", "img_url": Cerberus_image_url},
+    {"title": "Schiaparelli Hemisphere", "img_url": Schiaparelli_image_url},
+    {"title": "Syrtis Major Hemisphere", "img_url": Syrtis_image_url},
+]
 
+    mars_info_dict= {
+        'latest_news': listings['headline'],
+        'latest_summary': listings['summary'],
+        'featured_image': featured_image_url,
+        'Mars_facts_table': Mars_facts,
+        'Mars_hemispheres_images': hemisphere_image_urls
+        
+    }
+    
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    return mars_info_dict
+
+print(scrape())
+    
+    
+    
+    # browser = init_browser()
+    # listings = {}
+
+    
+    # browser.visit(url)
+
+    # html = browser.html
+    # soup = BeautifulSoup(html, "html.parser")
+
+    # listings["headline"] = soup.find("a", class_="result-title").get_text()
+    # listings["price"] = soup.find("span", class_="result-price").get_text()
+    # listings["hood"] = soup.find("span", class_="result-hood").get_text()
+
+    # return listings
