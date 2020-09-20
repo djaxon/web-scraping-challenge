@@ -10,7 +10,7 @@ def init_browser():
     return Browser("chrome", **executable_path, headless=False)
 
 
-def scrape():
+def scrape_all():
     # Latest news scrape
     url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
     listings={}
@@ -31,7 +31,7 @@ def scrape():
     # Mars facts table 
     Mars_facts = 'file:///C:/Users/djack/Documents/LearnPython/web-scraping-challenge/Mission_to_Mars/Mars_table.html'
     
-    # Mars hemispheres
+    # Mars hemisphere image URLs
     url_3 = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
     browser.visit(url_3)
     browser.click_link_by_partial_text('Cerberus')
@@ -53,7 +53,7 @@ def scrape():
     {"title": "Valles Marineris Hemisphere", "img_url": Valles_image_url},
     {"title": "Cerberus Hemisphere", "img_url": Cerberus_image_url},
     {"title": "Schiaparelli Hemisphere", "img_url": Schiaparelli_image_url},
-    {"title": "Syrtis Major Hemisphere", "img_url": Syrtis_image_url},
+    {"title": "Syrtis Major Hemisphere", "img_url": Syrtis_image_url}
 ]
 
     mars_info_dict= {
@@ -68,21 +68,3 @@ def scrape():
 
     return mars_info_dict
 
-print(scrape())
-    
-    
-    
-    # browser = init_browser()
-    # listings = {}
-
-    
-    # browser.visit(url)
-
-    # html = browser.html
-    # soup = BeautifulSoup(html, "html.parser")
-
-    # listings["headline"] = soup.find("a", class_="result-title").get_text()
-    # listings["price"] = soup.find("span", class_="result-price").get_text()
-    # listings["hood"] = soup.find("span", class_="result-hood").get_text()
-
-    # return listings

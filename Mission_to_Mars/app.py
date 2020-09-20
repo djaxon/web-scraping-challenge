@@ -14,15 +14,17 @@ mongo = PyMongo(app)
 
 @app.route("/")
 def index():
-    listings = mongo.db.mars_info_dict.find_one()
-    return render_template("index.html", listings=listings)
+    results = mongo.db.mars.find_one()
+    return render_template("index.html", mars_data=results)
 
 
 @app.route("/scrape")
-def scraper():
-    listings = mongo.db.mars_info_dict
-    listings_data = scrape_mars.scrape()
-    listings.update({}, listings_data, upsert=True)
+def scraper():  
+    test_data = scrape_mars.scrape_all()
+    # test_data={
+    #     'test': 'test_data'
+    # }
+    mongo.db.mars.update({}, test_data, upsert=True)
     return redirect("/", code=302)
 
 
