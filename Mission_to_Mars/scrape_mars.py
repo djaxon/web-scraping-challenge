@@ -29,13 +29,13 @@ def scrape_all():
     featured_image_url= browser.url
     
     # Mars facts table 
-    # table_url='https://space-facts.com/mars/'
-    # Mars_table = pd.read_html(table_url)
-    # df= Mars_table[0]
-    # df.columns=['Characteristics', 'Stats']
-    # Mars_facts=df.to_html().replace('\n', '')
+    table_url='https://space-facts.com/mars/'
+    Mars_table = pd.read_html(table_url)
+    df= Mars_table[0]
+    df.columns=['Characteristics', 'Stats']
+    Mars_facts=df.to_html().replace('\n', '')
 
-    Mars_facts = 'file:///C:/Users/djack/Documents/LearnPython/web-scraping-challenge/Mission_to_Mars/Mars_table.html'
+    # Mars_facts = 'file:///C:/Users/djack/Documents/LearnPython/web-scraping-challenge/Mission_to_Mars/Mars_table.html'
     
     # Mars hemisphere image URLs
     url_3 = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
