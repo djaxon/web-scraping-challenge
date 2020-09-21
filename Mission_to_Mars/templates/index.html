@@ -20,11 +20,21 @@
     <!-- Mars Scraped Data -->
     <div class="row" id="mars-listings">
       <div class="col-md-12">
-        <h4 class="heading">{{mars_data}}</h4>
+        <h2>{{mars_data.latest_news}}</h2>
+          <p>{{mars_data.latest_summary}}</p>
+          <img src = {{mars_data.featured_image}} style='height: 400px; width: 400px' >
+        <h2>Mars Facts Table</h2> 
+          <link rel="import" href={{mars_data.Mars_facts_table}}>
+        <h2>Mars Hemispheres</h2>
+          <!-- {% for img_url in mars_data.Mars_hemispheres_images.img_url %} -->
+          
+          <img src = {{mars_data.Mars_hemispheres_images}} style='height: 400px; width: 400px' >
+          <!-- {% endfor %} -->
       </div>
     </div>
 
   </div>
+
 </body>
 
 </html>
